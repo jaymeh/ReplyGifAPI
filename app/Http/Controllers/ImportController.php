@@ -8,27 +8,45 @@ use Goutte\Client;
 class ImportController extends BaseController
 {
     public function index() {
+        // Load in Goutte Client
     	$client = new Client();
+        $i = 0;
 
-    	$html = \file_get_html('http://replygif.net');
+        // Setup blank array of images and current tags to match to each image
+        $images = array();
+        $current_tags = array();
 
-    	foreach($html->find('img') as $element) {
-    		echo $element->src . '<br>';
-    	}
+        // Set while loop for 200 times. We probably won't get that high though
+        while ($i < 200) {
+            // Load in the crawler, pick out the tags and images
+        	$crawler = $client->request('GET', 'http://replygif.net?page='.$i);
 
-    	/* $crawler = $client->request('GET', 'http://replygif.net');
+            // Grab all tags for images
+            $image_tags = $crawler->filter('.item-list li .tags')->each(function ($node, $i) {
+                return  $node->text();
+            });
 
-    	// var_dump($crawler->filter('li.views-row')->text());
+            // Add them to our tag list
+            $current_tags = array_merge($current_tags, $image_tags);
 
-    	//$link = $crawler->selectLink('Security Advisories')->link();
+            // Loop through the tags and load images attached
+            foreach($image_tags as $tag) {
+                $image = $crawler->selectImage($tag)->image()->getUri();
 
-    	//$crawler = $client->click($link);
+                $images[] = str_replace('thumbnail', 'i', $image);
+            }
 
-    	$crawler->filter('div.image-container')->each(function ($node) {
-    		var_dump($node);
-		    //print $node->text();
-		});
+            // Used to detect when we are at the last page
+            $page_last = $crawler->filter('.pager .last')->each(function($node, $i) {
+                return $node->text();
+            });
 
-		// var_dump($crawler->filter('li.views-row')); */
+            // Bail out of while loop when we are on the last page
+            if(intval($page_last[0]) == $i && $i !== 0) {
+                break;
+            }
+
+            $i++;
+        }
     }
 }

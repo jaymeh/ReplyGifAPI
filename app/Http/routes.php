@@ -15,4 +15,4 @@ $app->get('/', function () use ($app) {
     return $app->version();
 });
 
-$app->get('/jamie', 'ImportController@index');
+$app->get('/import', 'ImportController@index');
