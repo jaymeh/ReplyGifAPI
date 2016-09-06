@@ -9,7 +9,8 @@
         "laravel/lumen-framework": "5.2.*",
         "vlucas/phpdotenv": "~2.2",
         "fabpot/goutte": "~3.1",
-        "weidner/goutte": "@dev"
+        "weidner/goutte": "@dev",
+        "wn/lumen-generators": "^1.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
