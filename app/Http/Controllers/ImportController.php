@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Goutte\Client;
 use App\Image;
 use App\Tag;
 use App\TagAssignment;
 
-class ImportController extends BaseController
+class ImportController extends Controller
 {
 	/**
 	 * Points to the index action of the Import Controller
