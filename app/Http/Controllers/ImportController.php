@@ -69,7 +69,9 @@ class ImportController extends Controller
         	$assignment_ids = $this->storeAssignments($tag_ids, $gif_id);
         }
 
-        // Send a reponse saying that its been done :)
+        return response()->json([
+            'success' => true
+        ]);
     }
 
     /**
