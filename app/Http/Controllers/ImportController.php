@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Goutte\Client;
 use App\Image;
 use App\Tag;
+use App\TagAssignment;
 
 class ImportController extends BaseController
 {
@@ -62,7 +63,7 @@ class ImportController extends BaseController
 
         	$tag_ids = $this->storeTerms($image['tag']);
 
-        	// Handle the linking right here.
+        	$assignment_ids = $this->storeAssignments($tag_ids, $gif_id);
         }
 
         // Send a reponse saying that its been done :)
@@ -90,7 +91,14 @@ class ImportController extends BaseController
     }
 
     protected function storeTerms($tag_items) {
-    	$term_ids = array();
+    	// Break up the term ids, explode on comma
+    	// 
+    	// Loop through each one of them if more than one and enter it into the db
+    	// 
+    	// Grab the id as it comes out and return an array of them
+    	// 
+    	// 
+    	$tag_ids = array();
 
     	$tag_array = explode(',', $tag_items);
 
@@ -114,13 +122,37 @@ class ImportController extends BaseController
     		}
     	}
 
-    	// Break up the term ids, explode on comma
-    	// 
-    	// Loop through each one of them if more than one and enter it into the db
-    	// 
-    	// Grab the id as it comes out and return an array of them
-    	// 
-    	// 
+    	return $tag_ids;
+    }
+
+    protected function storeAssignments($tag_ids, $image_id) {
+    	$item_ids = array();
+    	if(is_array($tag_ids)) {
+    		foreach($tag_ids as $tag_id) {
+    			// Check that the assignment exists?
+    			$tag_selector = TagAssignment::where('tag_id', '=', $tag_id)->where('image_id', '=', $image_id);
+
+    			$item_exists = $tag_selector->exists();
+
+    			if(!$item_exists) {
+    				$assignment_data = new TagAssignment();
+
+    				$assignment_data->image_id = $image_id;
+
+    				$assignment_data->tag_id = $tag_id;
+
+    				$assignment_data->save();
+
+    				$item_ids[] = $assignment_data->id;
+    			} else {
+    				$item = $tag_selector->first();
+
+    				$item_ids[] = $item->id;
+    			}
+    		}
+    	}
+
+    	return $item_ids;
     }
 
     // Implement a store tag function and link these babies up
