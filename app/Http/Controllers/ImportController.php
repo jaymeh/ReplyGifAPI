@@ -11,6 +11,10 @@ use App\TagAssignment;
 
 class ImportController extends BaseController
 {
+	/**
+	 * Points to the index action of the Import Controller
+	 * @param  Request $request Lumen Request Object
+	 */
     public function index(Request $request) {
         // Load in Goutte Client
     	$client = new Client();
@@ -69,6 +73,10 @@ class ImportController extends BaseController
         // Send a reponse saying that its been done :)
     }
 
+    /**
+     * Saves a single Image Link to the database
+     * @param  string $image_link Link to the gif
+     */
     protected function storeLink($image_link) {
     	$image_exists = Image::where('image_link', '=', $image_link)->exists();
     	
@@ -90,6 +98,11 @@ class ImportController extends BaseController
         }        
     }
 
+    /**
+     * Stores an array of tag items
+     * @param  array $tag_items Array of tag items
+     * @return array            Returns an array of tag ids from the database
+     */
     protected function storeTerms($tag_items) {
     	// Break up the term ids, explode on comma
     	// 
@@ -125,15 +138,26 @@ class ImportController extends BaseController
     	return $tag_ids;
     }
 
+    /**
+     * Stores the assignment data to link tags to gifs
+     * @param  array 	$tag_ids	Contains an array of tag ids
+     * @param  integer 	$image_id 	Contains an id of the image
+     * @return array           	   	Returns an Array of ids for the assignments
+     */
     protected function storeAssignments($tag_ids, $image_id) {
+    	// Setup container for assignment ids
     	$item_ids = array();
+
+    	// Check tags are an array
     	if(is_array($tag_ids)) {
+    		// Loop through the tag ids
     		foreach($tag_ids as $tag_id) {
     			// Check that the assignment exists?
     			$tag_selector = TagAssignment::where('tag_id', '=', $tag_id)->where('image_id', '=', $image_id);
 
     			$item_exists = $tag_selector->exists();
 
+    			// Check if the item exists. If it doesn't create it if it does just send its id back
     			if(!$item_exists) {
     				$assignment_data = new TagAssignment();
 
@@ -154,6 +178,4 @@ class ImportController extends BaseController
 
     	return $item_ids;
     }
-
-    // Implement a store tag function and link these babies up
 }
