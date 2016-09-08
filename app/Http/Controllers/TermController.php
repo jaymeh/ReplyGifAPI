@@ -27,11 +27,7 @@ class TermController extends Controller
 
    		if($lowercase == true) {
    			//$tags = Tag::
-   		}
-
-   		var_dump($lowercase);
-
-    	
+   		}	
 
     	$tag_array = array();
 
