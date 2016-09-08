@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Tag;
 
 class TermController extends Controller
@@ -16,9 +17,21 @@ class TermController extends Controller
         //
     }
 
-    public function allTerms() {
+    public function allTerms(Request $request) {
     	// Grab all terms and return them as a json array
-    	$tags = Tag::all();
+    
+   		// Option to get all lowercase options?
+   		$lowercase = $request->input('lowercase');
+
+   		$tags = Tag::all();
+
+   		if($lowercase == true) {
+   			//$tags = Tag::
+   		}
+
+   		var_dump($lowercase);
+
+    	
 
     	$tag_array = array();
 
