@@ -12,7 +12,18 @@
 */
 
 $app->get('/', function () use ($app) {
+	// Return 404
     return $app->version();
 });
 
 $app->get('/import', 'ImportController@index');
+
+/**
+ * Routes for resource api-v1
+ */
+$app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], function($app)
+{
+    $app->get('term','TermController@allTerms');
+  
+    $app->get('term/{id}','TermController@termById');
+});
