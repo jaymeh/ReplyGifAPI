@@ -17,6 +17,11 @@ class TermController extends Controller
         //
     }
 
+    /**
+     * Gets a list of all terms 
+     * @param  Request $request Lumen request object
+     * @return json_array       JSON array of all terms
+     */
     public function allTerms(Request $request) {
     	// Grab all terms and return them as a json array
     
@@ -25,14 +30,19 @@ class TermController extends Controller
 
    		$tags = Tag::all();
 
-   		if($lowercase == true) {
-   			//$tags = Tag::
-   		}	
-
     	$tag_array = array();
 
+    	// Loop through tags. Checks if lowercase is set and only get them if it is
     	foreach($tags as $tag) {
-    		$tag_array[] = array('term' => $tag->tag_name);
+    		if($lowercase == true) {
+    			$starts = $this->starts_with_upper($tag->tag_name);
+
+    			if(!$starts) {
+    				$tag_array[] = array('term' => $tag->tag_name);
+    			}
+    		} else {
+    			$tag_array[] = array('term' => $tag->tag_name);
+    		}
     	}
 
     	sort($tag_array);
@@ -40,9 +50,30 @@ class TermController extends Controller
     	return response()->json($tag_array);
     }
 
-    public function termById($id) {
-    	// Grab a term by its id and return them as a json array
+    public function termById(Request $request, $id) {
+    	// Return error if we aren't given an id that can be parsed as an integer
+    	if(!intval($id)) {
+    		// Return an error
+    		return response('Invalid id provided for term lookup', 500)->header('Content-Type', 'text/plain');
+    	}
+
+    	// Do the lookup with firstorfail.
     }
+
+    /**
+     * Detects if first character is uppercase or a number
+     * @param  string $str String to check
+     * @return bool        Returns true if first character is uppercase or a number
+     */
+    protected function starts_with_upper($str) {
+	    $chr = mb_substr ($str, 0, 1, "UTF-8");
+
+	    if(!intval($chr) <= 0) {
+	    	return true;
+	    }
+
+	    return mb_strtolower($chr, "UTF-8") != $chr;
+	}
 
     //
 }
