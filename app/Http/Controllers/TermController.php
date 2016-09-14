@@ -58,6 +58,18 @@ class TermController extends Controller
     	}
 
     	// Do the lookup with firstorfail.
+    	$tag = 	Tag::where('id', $id)
+    			->first();
+
+    	if(!isset($tag->id)) {
+    		return response('Could not find tag with given id: '.$id, 404)->header('Content-Type', 'text/plain');
+    	}
+
+    	$tag = array('term' => $tag->tag_name);
+
+    	return response()->json($tag);
+
+    	// Do the lookup with firstorfail.
     }
 
     /**
