@@ -15,5 +15,12 @@ class TagAssignment extends Model {
 	];
 
 	// Relationships
+	public function images() {
+		return $this->hasMany('App\Image', 'image_id');
+	}
+
+	public function tags() {
+		return $this->hasMany('App\Tag', 'tag_id');
+	}
 
 }

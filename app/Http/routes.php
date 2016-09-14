@@ -27,6 +27,8 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
   
     $app->get('term/{id}','TermController@termById');
 
+    $app->get('image/{term_name}', 'TermController@gifByTermName');
+
     $app->get('gif', 'GifController@allGifs');
 
     $app->get('gif/{id}', 'GifController@gifById');

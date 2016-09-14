@@ -14,6 +14,10 @@ class Tag extends Model {
 		// Validation rules
 	];
 
+	public function tagAssignments() {
+		return $this->belongsTo('App\TagAssignment', 'id');
+	}
+
 	// Relationships
 
 }

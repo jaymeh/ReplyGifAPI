@@ -35,7 +35,7 @@ class TermController extends Controller
     	// Loop through tags. Checks if lowercase is set and only get them if it is
     	foreach($tags as $tag) {
     		if($lowercase == true) {
-    			$starts = $this->starts_with_upper($tag->tag_name);
+    			$starts = $this->startsWithUpper($tag->tag_name);
 
     			if(!$starts) {
     				$tag_array[] = array('term' => $tag->tag_name);
@@ -72,12 +72,22 @@ class TermController extends Controller
     	// Do the lookup with firstorfail.
     }
 
+    public function gifByTermName($term_name) {
+    	$item = Tag::find(4);
+
+    	var_dump($item->tagAssignments);
+    }
+
+    protected function _termNameToId($termName) {
+    	$term = Tag::where('tag_name', $termName);
+    }
+
     /**
      * Detects if first character is uppercase or a number
      * @param  string $str String to check
      * @return bool        Returns true if first character is uppercase or a number
      */
-    protected function starts_with_upper($str) {
+    protected function startsWithUpper($str) {
 	    $chr = mb_substr ($str, 0, 1, "UTF-8");
 
 	    if(!intval($chr) <= 0) {
