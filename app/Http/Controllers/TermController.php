@@ -57,29 +57,56 @@ class TermController extends Controller
     		return response('Invalid id provided for term lookup', 500)->header('Content-Type', 'text/plain');
     	}
 
-    	// Do the lookup with firstorfail.
+    	// I thought about using first or fail however if we do it this way we take
+        // the error handling into our hands which is always good.
     	$tag = 	Tag::where('id', $id)
     			->first();
 
+        // Can't find the tag so we error out
     	if(!isset($tag->id)) {
     		return response('Could not find tag with given id: '.$id, 404)->header('Content-Type', 'text/plain');
     	}
 
+        // Format tag how we should use it
     	$tag = array('term' => $tag->tag_name);
 
+        // Send back json formatted response
     	return response()->json($tag);
-
-    	// Do the lookup with firstorfail.
     }
 
-    public function gifByTermName($term_name) {
-    	$item = Tag::find(4);
+    /**
+     * Get our GIF based on the term name we provide
+     */
+    public function gifByTermName(Request $request, $term_name) {
+        // Decode our term name for spaces etc
+        $term_name = urldecode($term_name);
 
-    	var_dump($item->tagAssignments);
-    }
+        // Find term by name
+        $term = Tag::where('tag_name', '=', $term_name)->first();
 
-    protected function _termNameToId($termName) {
-    	$term = Tag::where('tag_name', $termName);
+        // If we can't find the term error out
+        if(!isset($term->id)) {
+            return response('Could not find tag with given name: '.$term_name, 404)->header('Content-Type', 'text/plain');
+        }
+
+        // Get the images by the relationship
+        $images = $term->tagAssignments;
+        $image_links = array();
+
+        // Loop through the images and get their links
+        foreach($images as $image) {
+            $image_links[] = $image->image_link;
+        }
+
+        // Generate a random key to use
+        $random_link_key = array_rand($image_links);
+
+        // Run the final image link through JSON Encode. This is because the json function
+        // in the response object adds escape characters to slashes.
+        $final_link = json_encode(array('image' => $image_links[$random_link_key]), JSON_UNESCAPED_SLASHES);
+
+        // Return our 200 response
+        return response($final_link, 200);
     }
 
     /**

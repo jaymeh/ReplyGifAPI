@@ -16,7 +16,7 @@ class Image extends Model {
 
 	// Relationships
 	public function tagAssignments() {
-		return $this->belongsTo('App\TagAssignments', 'id');
+		return $this->belongsToMany('App\Tag', 'tag_assignments', 'image_id', 'tag_id');
 	}
 
 }
